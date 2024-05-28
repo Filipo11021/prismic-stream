@@ -1,70 +1,174 @@
-import { Image, StyleSheet, Platform } from 'react-native';
-
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import { FlatList, ScrollView, View } from "react-native";
+import { Text, Title, useTheme } from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { pb } from "@/utils/pocketbase";
+import { useQuery } from "@tanstack/react-query";
+import { ReactElement, ReactNode } from "react";
+import ContentLoader from "react-content-loader/native";
+import { Rect } from "react-native-svg";
+import { useActiveTrack } from "react-native-track-player";
+import { AudioPlayer } from "@/components/AudioPlayer";
+import {
+  BaseSectionCard,
+  SongSectionCard,
+} from "@/components/horizontal-section/section-card/section-card";
 
 export default function HomeScreen() {
+  const track = useActiveTrack();
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <SafeAreaView
+      style={{
+        paddingTop: 16,
+        height: "100%"
+      }}
+    >
+      <ScrollView>
+        <ArtistsSection />
+        <SongsSection />
+        <AlbumsSection />
+        <View style={{ height: 16 }} />
+      </ScrollView>
+
+      {track ? <AudioPlayer /> : null}
+    </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
+function HorizontalSection<T>({
+  data,
+  renderItem,
+  title,
+}: {
+  data: T[];
+  renderItem: (props: T) => ReactElement;
+  title: string | ReactNode;
+}) {
+  return (
+    <View style={{ paddingLeft: 12, paddingTop: 8 }}>
+      {typeof title === "string" ? <Title>{title}</Title> : title}
+      <FlatList
+        data={data}
+        contentContainerStyle={{ gap: 12 }}
+        horizontal
+        renderItem={({ item }) => renderItem(item)}
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
+        ListFooterComponent={View}
+      />
+    </View>
+  );
+}
+
+function HorizontalSectionPlaceholder() {
+  const theme = useTheme();
+  return (
+    <HorizontalSection
+      title={
+        <ContentLoader
+          speed={2}
+          width={100}
+          height={25}
+          backgroundColor={theme.colors.onBackground}
+        >
+          <Rect x="0" y="0" rx="0" ry="0" width="100" height="25" />
+        </ContentLoader>
+      }
+      data={Array.from({ length: 5 })}
+      renderItem={() => (
+        <ContentLoader
+          speed={2}
+          width={200}
+          height={240}
+          backgroundColor={theme.colors.onBackground}
+          style={{ margin: 10 }}
+        >
+          <Rect x="0" y="0" rx="0" ry="0" width="200" height="220" />
+          <Rect x="5" y="225" rx="0" ry="0" width="170" height="15" />
+        </ContentLoader>
+      )}
+    />
+  );
+}
+
+function SongsSection() {
+  const songsQuery = useQuery({
+    queryKey: ["songs"],
+    queryFn: () => pb.collection("songs").getFullList(),
+  });
+
+  if (songsQuery.isPending) return <HorizontalSectionPlaceholder />;
+
+  if (songsQuery.isError) return <Text>error: {songsQuery.error.message}</Text>;
+
+  return (
+    <HorizontalSection
+      renderItem={(data) => (
+        <SongSectionCard style={{ width: 200 }} {...data} />
+      )}
+      data={songsQuery.data.map((song) => ({
+        imageUrl: pb.files.getUrl(song, song.image),
+        title: song.name,
+        id: song.id,
+        song: song,
+      }))}
+      title="Latest Songs"
+    />
+  );
+}
+
+function ArtistsSection() {
+  const artistsQuery = useQuery({
+    queryKey: ["artists"],
+    queryFn: () => pb.collection("artists").getFullList(),
+  });
+
+  if (artistsQuery.isPending) return <HorizontalSectionPlaceholder />;
+
+  if (artistsQuery.isError) return <Text>{artistsQuery.error.message}</Text>;
+
+  return (
+    <HorizontalSection
+      renderItem={(data) => (
+        <BaseSectionCard style={{ width: 200 }} {...data} />
+      )}
+      data={artistsQuery.data.map((artist) => {
+        return {
+          imageUrl: pb.files.getUrl(artist, artist.image),
+          title: artist.name,
+          id: artist.id,
+          href: `/artists/${artist.id}`,
+        };
+      })}
+      title="Popular Artists"
+    />
+  );
+}
+
+function AlbumsSection() {
+  const albumsQuery = useQuery({
+    queryKey: ["albums"],
+    queryFn: () => pb.collection("albums").getFullList(),
+  });
+
+  if (albumsQuery.isPending) return <HorizontalSectionPlaceholder />;
+
+  if (albumsQuery.isError) return <Text>{albumsQuery.error.message}</Text>;
+
+  return (
+    <HorizontalSection
+      renderItem={(data) => (
+        <BaseSectionCard style={{ width: 200 }} {...data} />
+      )}
+      data={albumsQuery.data.map((artist) => {
+        return {
+          imageUrl: pb.files.getUrl(artist, artist.image),
+          title: artist.name,
+          id: artist.id,
+          href: `/albums/${artist.id}`,
+        };
+      })}
+      title="Popular Albums"
+    />
+  );
+}
