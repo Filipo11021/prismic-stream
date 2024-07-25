@@ -26,9 +26,8 @@ export default function TabLayout() {
               name={focused ? "home" : "home-outline"}
               color={color}
             />
-          )
+          ),
         }}
-
       />
       <Tabs.Screen
         name="explore"

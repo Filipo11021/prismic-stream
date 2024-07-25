@@ -1,7 +1,7 @@
 import { pb } from "@/utils/pocketbase";
 import { useQuery } from "@tanstack/react-query";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { FlatList, ScrollView, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { SegmentedButtons, Text, ActivityIndicator } from "react-native-paper";
 import { Image } from "expo-image";
 import { useEffect, useState } from "react";
@@ -10,7 +10,10 @@ import {
   ArtistsResponse,
   SongsResponse,
 } from "@/pocketbase-types";
-import { BaseSectionCard, SongSectionCard } from "@/components/horizontal-section/section-card/section-card";
+import {
+  BaseSectionCard,
+  SongSectionCard,
+} from "@/components/horizontal-section/section-card/section-card";
 
 export default function ArtistPage() {
   const { id } = useLocalSearchParams();
@@ -32,9 +35,9 @@ export default function ArtistPage() {
 
   useEffect(() => {
     navigation.setOptions({ title: query.data?.name ?? "...loading" });
-  }, [query]);
-  
-  if (query.isPending) return <ActivityIndicator size='large' />
+  }, [query, navigation]);
+
+  if (query.isPending) return <ActivityIndicator size="large" />;
 
   if (query.isError) return <Text>error</Text>;
 

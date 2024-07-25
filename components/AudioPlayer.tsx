@@ -2,10 +2,8 @@ import Slider from "@react-native-community/slider";
 import { View } from "react-native";
 import { IconButton, Text, useTheme } from "react-native-paper";
 import TrackPlayer, {
-  State,
   useActiveTrack,
   useIsPlaying,
-  usePlaybackState,
   useProgress,
 } from "react-native-track-player";
 
@@ -13,11 +11,15 @@ export function AudioPlayer() {
   const progress = useProgress();
   const track = useActiveTrack();
   const theme = useTheme();
-  const {playing} = useIsPlaying()
+  const { playing } = useIsPlaying();
 
   return (
     <View
-      style={{ borderTopColor: theme.colors.onBackground, borderTopWidth: 1, paddingTop: 4 }}
+      style={{
+        borderTopColor: theme.colors.onBackground,
+        borderTopWidth: 1,
+        paddingTop: 4,
+      }}
     >
       <View style={{ alignItems: "center" }}>
         <Text>{track?.title}</Text>
@@ -37,8 +39,9 @@ export function AudioPlayer() {
           mode="contained"
           iconColor="#fff"
           containerColor="#000"
-          onPress={async (e) => {
-            playing ? TrackPlayer.pause() : TrackPlayer.play();
+          onPress={async () => {
+            if (playing) TrackPlayer.pause();
+            else TrackPlayer.play();
           }}
         />
 

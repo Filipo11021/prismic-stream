@@ -7,7 +7,7 @@ import TrackPlayer, {
 const trackPlayerKey = [Symbol()];
 
 const setupPlayer = async (
-  options: Parameters<typeof TrackPlayer.setupPlayer>[0]
+  options: Parameters<typeof TrackPlayer.setupPlayer>[0],
 ) => {
   const setup = async () => {
     try {

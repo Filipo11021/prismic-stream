@@ -17,5 +17,5 @@ const store = new AsyncAuthStore({
 
 export const pb = new PocketBase(
   process.env.EXPO_PUBLIC_PB_URL,
-  store
+  store,
 ) as TypedPocketBase;

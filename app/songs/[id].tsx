@@ -18,7 +18,7 @@ export default function SongPage() {
 
   useEffect(() => {
     navigation.setOptions({ title: query.data?.name ?? "...loading" });
-  }, [query]);
+  }, [query, navigation]);
 
   if (query.isPending) return <Text>...loading</Text>;
 

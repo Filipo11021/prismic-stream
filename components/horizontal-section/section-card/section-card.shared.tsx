@@ -7,16 +7,20 @@ export function SectionCardTitle({ children }: { children: ReactNode }) {
   return <Card.Title titleNumberOfLines={3} title={children} />;
 }
 
-export function SectionCardContainer({children, style, href}: {
+export function SectionCardContainer({
+  children,
+  style,
+  href,
+}: {
   style?: StyleProp<ViewStyle>;
   children: ReactNode;
-  href?: string
+  href?: string;
 }) {
   const { push } = useRouter();
 
   return (
     <Card
-      onPress={() => href ? push(href) : null}
+      onPress={() => (href ? push(href) : null)}
       mode="contained"
       style={[style]}
     >
@@ -24,4 +28,3 @@ export function SectionCardContainer({children, style, href}: {
     </Card>
   );
 }
-

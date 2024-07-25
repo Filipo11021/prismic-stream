@@ -87,7 +87,7 @@ export function SongSectionCard(props: {
                       title: props.song.name,
                     },
                   ],
-                  ((await TrackPlayer.getActiveTrackIndex()) ?? -1) + 1
+                  ((await TrackPlayer.getActiveTrackIndex()) ?? -1) + 1,
                 );
                 TrackPlayer.play();
                 TrackPlayer.skipToNext();

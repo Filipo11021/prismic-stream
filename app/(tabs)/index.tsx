@@ -20,7 +20,7 @@ export default function HomeScreen() {
     <SafeAreaView
       style={{
         paddingTop: 16,
-        height: "100%"
+        height: "100%",
       }}
     >
       <ScrollView>

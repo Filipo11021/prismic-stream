@@ -18,17 +18,16 @@ export default function AlbumsPage() {
     queryFn: () =>
       pb
         .collection("albums")
-        .getOne<AlbumsResponse<{ songs_via_album?: SongsResponse[] }>>(
-          String(id),
-          {
-            expand: "songs_via_album",
-          }
-        ),
+        .getOne<
+          AlbumsResponse<{ songs_via_album?: SongsResponse[] }>
+        >(String(id), {
+          expand: "songs_via_album",
+        }),
   });
 
   useEffect(() => {
     navigation.setOptions({ title: query.data?.name ?? "...loading" });
-  }, [query]);
+  }, [query, navigation]);
 
   if (query.isPending) return <Text>...loading</Text>;
 

@@ -99,8 +99,10 @@ function RootLayout() {
   );
 }
 
-export default () => (
-  <Providers>
-    <RootLayout />
-  </Providers>
-);
+export default function Layout() {
+  return (
+    <Providers>
+      <RootLayout />
+    </Providers>
+  );
+}

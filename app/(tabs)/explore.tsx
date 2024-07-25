@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function TabTwoScreen() {
   return (
     <SafeAreaView>
-      <Title>Hello!</Title>  
+      <Title>Hello!</Title>
     </SafeAreaView>
   );
 }
