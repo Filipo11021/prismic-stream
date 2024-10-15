@@ -1,0 +1,67 @@
+<div class="flex flex-col gap-4 max-w-xl w-full mx-auto py-8">
+
+  <div class="flex justify-between">
+    <h1>Halo <%= @user.username %></h1>
+    <%= link_to "Log out", session_url, class: "btn btn-error", data:
+      { turbo_method: :delete, turbo_confirm: "Are you sure?" }
+    %>
+  </div>
+
+  <% if notice = flash[:notice] %>
+    <p class="py-2 px-3 bg-green-50 mb-5 text-green-500 font-medium rounded-lg inline-block" id="notice"><%= notice %></p>
+  <% end %>
+
+  <div class="flex mw-full mt-10">
+    <label class="input-group">
+      <%= render partial: 'stream_key', locals: { channel: @user.channel } %>
+
+      <div class="input-group-text">
+        <button type="button" class="copy-clipboard input-group-text" aria-label="Copy text to clipboard" data-clipboard-target="#<%= dom_id(Channel, :stream_key) %>" data-clipboard-action="copy">
+          <span class="copy-clipboard-default icon-[tabler--clipboard] size-5 transition"></span>
+          <span class="copy-clipboard-success icon-[tabler--clipboard-check] text-primary hidden size-5"></span>
+        </button>
+      </div>
+
+      <div class="input-group-text">
+        <button type="button" data-toggle-password='{ "target": "#<%= dom_id(Channel, :stream_key) %>" }' class="block" aria-label="password toggle">
+          <span class="icon-[tabler--eye] text-base-content/80 password-active:block hidden size-5 flex-shrink-0"></span>
+          <span class="icon-[tabler--eye-off] text-base-content/80 password-active:hidden block size-5 flex-shrink-0"></span>
+        </button>
+      </div>
+
+
+      <%= link_to "Generate new stream key", channels_stream_key_path, class: "btn btn-outline btn-primary join-item", data:
+        { turbo_method: :post, turbo_confirm: "Are you sure?", turbo_frame: dom_id(Channel, :stream_key) }
+      %>
+    </label>
+  </div>
+
+  <div class="divider divider-neutral"></div>
+
+  <div class="flex flex-col gap-2">
+    <p>Title: <span class="font-semibold" id="<%= dom_id(Channel, :title) %>"><%= @user.channel.title %></span></p>
+
+    <%= form_with(url: channels_title_path, class: "flex gap-4", data: { controller: "form", action: "turbo:submit-end->form#reset" }) do |form| %>
+      <div class="join w-full">
+        <%= form.text_field :title, class: "input join-item", placeholder: "Your Title", autocomplete: "off" %>
+        <%= form.submit "Change", class: "btn btn-outline btn-primary join-item" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="divider divider-neutral"></div>
+
+  <div class="flex items-center gap-4 max-sm:flex-wrap w-full">
+    <div class="avatar">
+      <div id="<%= dom_id(User, :avatar) %>" class="size-20 rounded-full">
+        <img alt="" src="<%= url_for(@user.avatar) %>"/>
+      </div>
+    </div>
+    <%= form_with(url: users_avatar_path, class: "flex w-full gap-4", html: { multipart: true }) do |form| %>
+      <%= form.file_field :avatar, class: "file:btn w-full file:btn-secondary block text-sm file:me-3 file:rounded-full file:uppercase" %>
+      <%= form.submit class: "btn btn-outline btn-primary" %>
+    <% end %>
+  </div>
+
+
+</div>
