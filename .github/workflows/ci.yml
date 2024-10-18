@@ -74,8 +74,10 @@ jobs:
         with:
           ruby-version: .ruby-version
           bundler-cache: true
+
       - name: Install Node and install npm packages
         run: sudo apt-get install --no-install-recommends -y nodejs && npm install
+
       - name: Run tests
         env:
           RAILS_ENV: test

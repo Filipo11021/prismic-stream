@@ -20,6 +20,6 @@ module.exports = {
         require('@tailwindcss/typography'),
         require('@tailwindcss/container-queries'),
         require("flyonui"),
-        require("flyonui-plugin")
+        require("flyonui/plugin")
     ]
 }
