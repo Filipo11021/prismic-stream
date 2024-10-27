@@ -1,0 +1,12 @@
+<div class="p-10">
+  <div class="flex flex-wrap gap-4">
+    <% @channels.each do |channel| %>
+      <div class="card bg-primary/10 border-primary text-white border shadow-none">
+        <div class="card-body">
+          <h2 class="card-title mb-2.5"><%= channel.user.username %></h2>
+          <a class="link" href="<%= channel_path channel.user.username %>"><%= channel.title %></a class="link">
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,52 @@
+<div data-channel-id="<%= @channel.id %>" class="flex p-4 gap-3 h-screen">
+  <div class="flex-1 flex flex-col gap-3 items-center">
+    <div id="video-container" class="flex-1 flex max-w-[1350px] w-full">
+      <video id="video"></video>
+     <div id="offline-message" class="hidden m-auto text-4xl">
+    <p>Stream is currently offline</p>
+  </div>
+  <div id="loading-message" class="hidden m-auto text-4xl"><p>Loading...</p></div>
+    </div>
+    <div class="card border-primary border bg-transparent shadow-none w-full">
+      <div class="card-body">
+        <div class="flex gap-4 items-center justify-between">
+          <div class="flex gap-4">
+            <div class="avatar">
+            <div class="size-12 rounded-full bg-gray-600">
+              <% if @channel.user.avatar.attached? %>
+                <img src="<%= url_for(@channel.user.avatar) %>"/>
+              <% end %>
+            </div>
+          </div>
+
+          <div>
+            <p class="text-3xl"><%= @channel.user.username %></p>
+            <h1 class="text-sm"><%= @channel.title %></h1>
+          </div>
+          </div>
+
+          <div>
+            <%= render 'follows/follow_button', user: @channel.user %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="max-w-96 flex flex-col justify-end flex-1 card border-primary border bg-transparent shadow-none">
+    <div class="card-body  flex-col justify-end overflow-hidden">
+      <div id="messages" class="overflow-y-scroll scroll-smooth">
+        <% @messages.each do |message| %>
+          <%= render partial: "messages/message", locals: { message: message } %>
+        <% end %>
+      </div>
+
+      <%= form_with(model: Message.new, url: channel_messages_path(@channel), class: "flex flex-col gap-2", data: { controller: "form", action: "turbo:submit-end->form#reset" }) do |form| %>
+        <%= form.text_area :content, class: "resize-none overflow-hidden input", placeholder: "Type your message...", rows: 1, oninput: 'this.style.height = "";this.style.height = this.scrollHeight + "px"' %>
+        <%= form.submit "Send", class: "btn btn-primary btn-sm block ml-auto" %>
+      <% end %>
+    </div>
+  </div>
+
+</div>

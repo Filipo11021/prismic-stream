@@ -1,0 +1,22 @@
+
+<%# locals: (user:) -%>
+<div id="follow_button_<%= user.id %>">
+  <% if Current.session.user.followed_users.present? and Current.session.user.followed_users.include?(user) %>
+    <%= button_to user_follow_path(user), 
+        method: :delete, 
+        class: "btn btn-soft btn-error",
+        data: { turbo: true } do %>
+      <span class="icon-[tabler--heart]"></span>
+      Unfollow
+    <% end %>
+  <% else %>
+    <%= button_to user_follow_path(user), 
+        method: :post, 
+        class: "btn btn-primary",
+        data: { turbo: true } do %>
+      <span class="icon-[tabler--heart]"></span>
+      Follow
+    <% end %>
+  <% end %>
+  <div id="follow_error_<%= user.id %>"></div>
+</div>

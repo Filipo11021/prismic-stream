@@ -1,0 +1,18 @@
+<div class="max-w-sm mx-auto p-3">
+  <% if alert = flash[:alert] %>
+    <p class="py-2 px-3 bg-red-50 mb-5 text-red-500 font-medium rounded-lg inline-block" id="alert"><%= alert %></p>
+  <% end %>
+
+  <h1 class="font-bold text-2xl mb-10">Forgot your password?</h1>
+
+  <%= form_with url: passwords_path, class: "flex flex-col gap-6" do |form| %>
+    <div class="form-control">
+      <div class="label">
+        <label id="email-input" class="label-text">Email</label>
+      </div>
+      <%= form.email_field :email_address, id: "email-input", class: "input input-floating peer", required: true, autofocus: true, autocomplete: "username", placeholder: "Enter your email address", value: params[:email_address] %>
+    </div>
+
+    <%= form.submit "Email reset instructions", class: "btn btn-primary btn-block" %>
+  <% end %>
+</div>
